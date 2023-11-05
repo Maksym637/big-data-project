@@ -1,25 +1,29 @@
+"""Module with basic models for each data"""
+
 class TitleAkasModel:
-    pass
+    """Fields for the `title.akas` data"""
 
 class TitleBasicsModel:
-    pass
+    """Fields for the `title.basics` data"""
 
 class TitleCrewModel:
-    pass
+    """Fields for the `title.crew` data"""
 
 class TitleEpisodeModel:
+    """Fields for the `title.episode` data"""
     tconst = 'tconst'
     parent_tconst = 'parentTconst'
     season_number = 'seasonNumber'
     episode_number = 'episodeNumber'
 
 class TitlePrincipalsModel:
-    pass
+    """Fields for the `title.principals` data"""
 
 class TitleRatingsModel:
+    """Fields for the `title.ratings` data"""
     tconst = 'tconst'
     average_rating = 'averageRating'
     number_votes = 'numVotes'
 
 class NameBasicsModel:
-    pass
+    """Fields for the `name.basics` data"""

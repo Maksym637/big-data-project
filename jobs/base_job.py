@@ -1,11 +1,13 @@
-from pyspark.sql import SparkSession
+"""Module for the parent class of each dataset"""
 
+from pyspark.sql import SparkSession
 import pyspark.sql.types as t
 
 from utils.constants import OUTPUT_DATA_PATH
 
 
 class TSVData:
+    """Parent class with basic methods"""
 
     def __init__(
         self,
@@ -22,21 +24,27 @@ class TSVData:
         )
 
     def get_first_rows(self) -> None:
+        """Get first 10 rows of the dataset"""
         return self.tsv_df.show(n=10)
 
     def get_rows_count(self) -> int:
+        """Get the total number of rows"""
         return self.tsv_df.count()
 
-    def get_schema_info(self) -> t.StructType:
+    def get_schema_info(self) -> None:
+        """Get information about the schema"""
         return self.tsv_df.printSchema()
 
     def get_all_columns(self) -> list:
+        """Get the total columns count"""
         return self.tsv_df.columns
 
     def get_basic_statistics(self) -> None:
+        """Get basic statistics of all columns"""
         return self.tsv_df.describe().show()
 
     def get_basic_statistics_numeric_columns(self) -> None:
+        """Get basic statistics for numerical columns only"""
         numeric_columns = []
 
         for field in self.tsv_df.schema.fields:
@@ -46,6 +54,7 @@ class TSVData:
         return self.tsv_df.select(numeric_columns).summary().show()
 
     def write_results_to_file(self) -> None:
+        """Write results to a specific folder"""
         self.tsv_df.write.csv(
             path=OUTPUT_DATA_PATH,
             header=True,

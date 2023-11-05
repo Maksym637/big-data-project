@@ -1,4 +1,7 @@
+"""Module with basic schemas for each data"""
+
 import pyspark.sql.types as t
+
 
 title_episode_schema = t.StructType(fields=[
     t.StructField(name='tconst', dataType=t.StringType(), nullable=False),
