@@ -170,3 +170,9 @@ cython_debug/
 # - name.basics.tsv
 # where .tsv is Tab-separated values
 data/
+
+# Folder with data processing results
+results/
+
+# Data input output constants
+utils/constants.py
