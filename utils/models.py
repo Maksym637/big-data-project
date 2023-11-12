@@ -18,6 +18,12 @@ class TitleEpisodeModel:
 
 class TitlePrincipalsModel:
     """Fields for the `title.principals` data"""
+    tconst = 'tconst'
+    ordering = 'ordering'
+    nconst = 'nconst'
+    category = 'category'
+    job = 'job'
+    characters = 'characters'
 
 class TitleRatingsModel:
     """Fields for the `title.ratings` data"""
