@@ -56,11 +56,11 @@ if __name__ == '__main__':
         # BQ for the `title.ratings` data
         (title_ratings_df.count_highly_rated_titles(), 'title_ratings_bq_1'),
         (title_ratings_df.count_titles_with_few_votes(), 'title_ratings_bq_2'),
-        (title_ratings_df.get_average_votes_per_rating_interval(), 'title_ratings_bq_3')
+        (title_ratings_df.get_average_votes_per_rating_interval(), 'title_ratings_bq_3'),
         # BQ for the `title.principals` data
-        (title_principals_df.get_business_question_1(), 'title_principals_bq_1'),
-        (title_principals_df.get_business_question_2(), 'title_principals_bq_2'),
-        (title_principals_df.get_business_question_3(). 'title_principals_bq_3')
+        (title_principals_df.get_people_count_on_each_film(), 'title_principals_bq_1'),
+        (title_principals_df.get_first_person_ids_with_biggest_lead_movies_number(), 'title_principals_bq_2'),
+        (title_principals_df.get_first_person_id_with_distinct_jobs(), 'title_principals_bq_3')
     ]
 
     write_results_to_file(processed_df_list)
