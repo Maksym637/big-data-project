@@ -1,7 +1,7 @@
 """Module with basic schemas for each data"""
 
 import pyspark.sql.types as t
-from utils.models import TitlePrincipalsModel
+from utils.models import TitlePrincipalsModel, TitleCrewModel
 
 title_episode_schema = t.StructType(fields=[
     t.StructField(name='tconst', dataType=t.StringType(), nullable=False),
@@ -23,4 +23,10 @@ title_principals_schema = t.StructType(fields=[
     t.StructField(name=TitlePrincipalsModel.category, dataType=t.StringType(), nullable=False),
     t.StructField(name=TitlePrincipalsModel.job, dataType=t.StringType(), nullable=True),
     t.StructField(name=TitlePrincipalsModel.characters, dataType=t.StringType(), nullable=True),
+])
+
+title_crew_schema = t.StructType(fields=[
+    t.StructField(name=TitleCrewModel.tconst, dataType=t.StringType(), nullable=False),
+    t.StructField(name=TitleCrewModel.directors, dataType=t.StringType(), nullable=False),
+    t.StructField(name=TitleCrewModel.writers, dataType=t.StringType(), nullable=True),
 ])
