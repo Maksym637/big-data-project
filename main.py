@@ -74,6 +74,9 @@ if __name__ == '__main__':
         (title_crew_df.get_titles_without_writers(), 'title_crew_bq_1'),
         (title_crew_df.get_top_10_titles_by_crew_count(), 'title_crew_bq_2'),
         (title_crew_df.get_one_man_titles(), 'title_crew_bq_3'),
+        (title_crew_df.get_titles_where_director_also_played_character(title_principals_df), 'title_crew_bq_4'),
+        (title_crew_df.get_writers_title_rating_rank(title_ratings_df), 'title_crew_bq_5'),
+        (title_crew_df.get_directors_total_title_count(), 'title_crew_bq_6'),
     ]
 
     write_results_to_file(processed_df_list)
