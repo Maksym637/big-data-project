@@ -8,12 +8,14 @@ from utils.helpers import write_results_to_file
 from utils.schemas import (
     title_episode_schema,
     title_ratings_schema,
-    title_principals_schema
+    title_principals_schema,
+    title_crew_schema
 )
 
 from jobs.title_episode_job import TitleEpisodeData
 from jobs.title_ratings_job import TitleRatingsData
 from jobs.title_principals_job import TitlePrincipalsData
+from jobs.title_crew_job import TitleCrewData
 
 spark_session = (
     SparkSession.builder
@@ -43,10 +45,17 @@ if __name__ == '__main__':
         schema=title_principals_schema
     )
 
+    title_crew_df = TitleCrewData(
+        spark_session=spark_session,
+        path=f'{INPUT_DATA_PATH}/title.crew.tsv',
+        schema=title_crew_schema
+    )
+
     # Definition of business questions
     title_episode_df.get_first_rows()
     title_ratings_df.get_first_rows()
     title_principals_df.get_first_rows()
+    title_crew_df.get_first_rows()
 
     processed_df_list = [
         # BQ for the `title.episode` data
@@ -60,7 +69,14 @@ if __name__ == '__main__':
         # BQ for the `title.principals` data
         (title_principals_df.get_people_count_on_each_film(), 'title_principals_bq_1'),
         (title_principals_df.get_first_person_ids_with_biggest_lead_movies_number(), 'title_principals_bq_2'),
-        (title_principals_df.get_first_person_id_with_distinct_jobs(), 'title_principals_bq_3')
+        (title_principals_df.get_first_person_id_with_distinct_jobs(), 'title_principals_bq_3'),
+        # BQ for the `title.crew` data
+        (title_crew_df.get_titles_without_writers(), 'title_crew_bq_1'),
+        (title_crew_df.get_top_10_titles_by_crew_count(), 'title_crew_bq_2'),
+        (title_crew_df.get_one_man_titles(), 'title_crew_bq_3'),
+        (title_crew_df.get_titles_where_director_also_played_character(title_principals_df), 'title_crew_bq_4'),
+        (title_crew_df.get_writers_title_rating_rank(title_ratings_df), 'title_crew_bq_5'),
+        (title_crew_df.get_directors_total_title_count(), 'title_crew_bq_6'),
     ]
 
     write_results_to_file(processed_df_list)

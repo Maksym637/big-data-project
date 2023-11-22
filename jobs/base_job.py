@@ -18,7 +18,7 @@ class TSVData:
             schema=schema,
             sep='\t',
             header=True,
-            nullValue='/N'
+            nullValue='\\N'
         )
 
     def get_first_rows(self) -> None:
