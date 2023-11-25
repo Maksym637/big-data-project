@@ -70,6 +70,9 @@ if __name__ == '__main__':
         (title_principals_df.get_people_count_on_each_film(), 'title_principals_bq_1'),
         (title_principals_df.get_first_person_ids_with_biggest_lead_movies_number(), 'title_principals_bq_2'),
         (title_principals_df.get_first_person_id_with_distinct_jobs(), 'title_principals_bq_3'),
+        (title_principals_df.get_directors_of_the_most_popular_titles(title_ratings_df), 'title_principals_bq_4'),
+        (title_principals_df.get_people_which_had_two_or_more_distinct_job_categories(), 'title_principals_bq_5'),
+        (title_principals_df.get_three_titles_per_person(), 'title_principals_bq_6'),
         # BQ for the `title.crew` data
         (title_crew_df.get_titles_without_writers(), 'title_crew_bq_1'),
         (title_crew_df.get_top_10_titles_by_crew_count(), 'title_crew_bq_2'),
