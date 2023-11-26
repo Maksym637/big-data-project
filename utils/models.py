@@ -8,6 +8,9 @@ class TitleBasicsModel:
 
 class TitleCrewModel:
     """Fields for the `title.crew` data"""
+    tconst = 'tconst'
+    directors = 'directors'
+    writers = 'writers'
 
 class TitleEpisodeModel:
     """Fields for the `title.episode` data"""
@@ -18,6 +21,12 @@ class TitleEpisodeModel:
 
 class TitlePrincipalsModel:
     """Fields for the `title.principals` data"""
+    tconst = 'tconst'
+    ordering = 'ordering'
+    nconst = 'nconst'
+    category = 'category'
+    job = 'job'
+    characters = 'characters'
 
 class TitleRatingsModel:
     """Fields for the `title.ratings` data"""

@@ -3,8 +3,6 @@
 from pyspark.sql import SparkSession
 import pyspark.sql.types as t
 
-from utils.constants import OUTPUT_DATA_PATH
-
 
 class TSVData:
     """Parent class with basic methods"""
@@ -20,7 +18,7 @@ class TSVData:
             schema=schema,
             sep='\t',
             header=True,
-            nullValue='/N'
+            nullValue='\\N'
         )
 
     def get_first_rows(self) -> None:
@@ -52,11 +50,3 @@ class TSVData:
                 numeric_columns.append(field.name)
 
         return self.tsv_df.select(numeric_columns).summary().show()
-
-    def write_results_to_file(self) -> None:
-        """Write results to a specific folder"""
-        self.tsv_df.write.csv(
-            path=OUTPUT_DATA_PATH,
-            header=True,
-            mode='overwrite'
-        )
