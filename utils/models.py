@@ -5,6 +5,15 @@ class TitleAkasModel:
 
 class TitleBasicsModel:
     """Fields for the `title.basics` data"""
+    tconst = 'tconst'
+    title_type = 'titleType'
+    primary_title = 'primaryTitle'
+    original_title = 'originalTitle'
+    is_adult = 'isAdult'
+    start_year = 'startYear'
+    end_year = 'endYear'
+    runtime_minutes = 'runtimeMinutes'
+    genres = 'genres'
 
 class TitleCrewModel:
     """Fields for the `title.crew` data"""
