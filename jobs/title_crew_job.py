@@ -97,7 +97,11 @@ class TitleCrewData(TSVData):
         """
         writer_col: str = "writer"
         rank_col: str = "rank"
-        window_spec: WindowSpec = Window.partitionBy(writer_col).orderBy(col(TitleRatingsModel.average_rating).desc())
+        window_spec: WindowSpec = (
+            Window
+                .partitionBy(writer_col)
+                .orderBy(col(TitleRatingsModel.average_rating).desc())
+        )
 
         return (
             self.tsv_df

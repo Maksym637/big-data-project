@@ -71,6 +71,7 @@ if __name__ == '__main__':
         (title_episode_df.get_title_episodes_with_provided_season_number(), 'title_episode_bq_1'),
         (title_episode_df.get_first_title_episodes_in_interval(), 'title_episode_bq_2'),
         (title_episode_df.get_first_latest_title_episodes(), 'title_episode_bq_3'),
+        (title_episode_df.rank_episodes_within_each_season(), 'title_episode_bq_4'),
 
         # BQ for the `title.ratings` data
         (title_ratings_df.count_highly_rated_titles(), 'title_ratings_bq_1'),
