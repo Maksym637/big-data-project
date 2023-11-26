@@ -9,13 +9,15 @@ from utils.schemas import (
     title_episode_schema,
     title_ratings_schema,
     title_principals_schema,
-    title_crew_schema
+    title_crew_schema,
+    title_basics_schema
 )
 
 from jobs.title_episode_job import TitleEpisodeData
 from jobs.title_ratings_job import TitleRatingsData
 from jobs.title_principals_job import TitlePrincipalsData
 from jobs.title_crew_job import TitleCrewData
+from jobs.title_basics_job import TitleBasicsData
 
 spark_session = (
     SparkSession.builder
@@ -51,21 +53,30 @@ if __name__ == '__main__':
         schema=title_crew_schema
     )
 
+    title_basics_df = TitleBasicsData(
+        spark_session=spark_session,
+        path=f'{INPUT_DATA_PATH}/title.basics.tsv',
+        schema=title_basics_schema
+    )
+
     # Definition of business questions
     title_episode_df.get_first_rows()
     title_ratings_df.get_first_rows()
     title_principals_df.get_first_rows()
     title_crew_df.get_first_rows()
+    title_basics_df.get_first_rows()
 
     processed_df_list = [
         # BQ for the `title.episode` data
         (title_episode_df.get_title_episodes_with_provided_season_number(), 'title_episode_bq_1'),
         (title_episode_df.get_first_title_episodes_in_interval(), 'title_episode_bq_2'),
         (title_episode_df.get_first_latest_title_episodes(), 'title_episode_bq_3'),
+
         # BQ for the `title.ratings` data
         (title_ratings_df.count_highly_rated_titles(), 'title_ratings_bq_1'),
         (title_ratings_df.count_titles_with_few_votes(), 'title_ratings_bq_2'),
         (title_ratings_df.get_average_votes_per_rating_interval(), 'title_ratings_bq_3'),
+
         # BQ for the `title.principals` data
         (title_principals_df.get_people_count_on_each_film(), 'title_principals_bq_1'),
         (title_principals_df.get_first_person_ids_with_biggest_lead_movies_number(), 'title_principals_bq_2'),
@@ -73,6 +84,7 @@ if __name__ == '__main__':
         (title_principals_df.get_directors_of_the_most_popular_titles(title_ratings_df), 'title_principals_bq_4'),
         (title_principals_df.get_people_which_had_two_or_more_distinct_job_categories(), 'title_principals_bq_5'),
         (title_principals_df.get_three_titles_per_person(), 'title_principals_bq_6'),
+
         # BQ for the `title.crew` data
         (title_crew_df.get_titles_without_writers(), 'title_crew_bq_1'),
         (title_crew_df.get_top_10_titles_by_crew_count(), 'title_crew_bq_2'),
@@ -80,6 +92,12 @@ if __name__ == '__main__':
         (title_crew_df.get_titles_where_director_also_played_character(title_principals_df), 'title_crew_bq_4'),
         (title_crew_df.get_writers_title_rating_rank(title_ratings_df), 'title_crew_bq_5'),
         (title_crew_df.get_directors_total_title_count(), 'title_crew_bq_6'),
+
+        # BQ for the `title.basics` data
+        (title_basics_df.count_non_adult_basics_titles(), 'title_basics_bq_1'),
+        (title_basics_df.get_count_each_title_type(), 'title_basics_bq_2'),
+        (title_basics_df.get_primary_title_where_worked_most_writers(title_crew_df), 'title_basics_bq_3'),
+        (title_basics_df.get_title_basics_with_max_runtime_minutes(), 'title_basics_bq_4')
     ]
 
     write_results_to_file(processed_df_list)
