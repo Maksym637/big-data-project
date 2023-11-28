@@ -10,7 +10,8 @@ from utils.schemas import (
     title_ratings_schema,
     title_principals_schema,
     title_crew_schema,
-    title_basics_schema
+    title_basics_schema,
+    name_basics_schema
 )
 
 from jobs.title_episode_job import TitleEpisodeData
@@ -18,6 +19,7 @@ from jobs.title_ratings_job import TitleRatingsData
 from jobs.title_principals_job import TitlePrincipalsData
 from jobs.title_crew_job import TitleCrewData
 from jobs.title_basics_job import TitleBasicsData
+from jobs.name_basics_job import NameBasicsData
 
 spark_session = (
     SparkSession.builder
@@ -59,12 +61,19 @@ if __name__ == '__main__':
         schema=title_basics_schema
     )
 
+    name_basics_df = NameBasicsData(
+        spark_session=spark_session,
+        path=f'{INPUT_DATA_PATH}/name.basics.tsv',
+        schema=name_basics_schema
+    )
+
     # Definition of business questions
     title_episode_df.get_first_rows()
     title_ratings_df.get_first_rows()
     title_principals_df.get_first_rows()
     title_crew_df.get_first_rows()
     title_basics_df.get_first_rows()
+    name_basics_df.get_first_rows()
 
     processed_df_list = [
         # BQ for the `title.episode` data
@@ -97,7 +106,12 @@ if __name__ == '__main__':
         (title_basics_df.count_non_adult_basics_titles(), 'title_basics_bq_1'),
         (title_basics_df.get_count_each_title_type(), 'title_basics_bq_2'),
         (title_basics_df.get_primary_title_where_worked_most_writers(title_crew_df), 'title_basics_bq_3'),
-        (title_basics_df.get_title_basics_with_max_runtime_minutes(), 'title_basics_bq_4')
+        (title_basics_df.get_title_basics_with_max_runtime_minutes(), 'title_basics_bq_4'),
+
+        # BQ for the `name.basics` data
+        (name_basics_df.get_first_alive_specific_persons(), 'name_basics_bq_1'),
+        (name_basics_df.count_persons_by_profession(), 'name_basics_bq_2'),
+        (name_basics_df.count_persons_by_birth_year_with_number_of_titles(), 'name_basics_bq_3')
     ]
 
     write_results_to_file(processed_df_list)

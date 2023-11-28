@@ -45,3 +45,9 @@ class TitleRatingsModel:
 
 class NameBasicsModel:
     """Fields for the `name.basics` data"""
+    nconst = 'nconst'
+    primary_name = 'primaryName'
+    birth_year = 'birthYear'
+    death_year = 'deathYear'
+    primary_profession = 'primaryProfession'
+    known_for_titles = 'knownForTitles'
