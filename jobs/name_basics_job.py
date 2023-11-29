@@ -20,7 +20,7 @@ class NameBasicsData(TSVData):
                     (col(NameBasicsModel.death_year).isNull()) &
                     (col(NameBasicsModel.primary_profession).contains("producer"))
             )
-        ).show(n=threshold)
+        ).limit(num=threshold)
 
     def count_persons_by_profession(self, threshold=2) -> DataFrame:
         """
@@ -31,7 +31,7 @@ class NameBasicsData(TSVData):
                     (col(NameBasicsModel.primary_profession).isNotNull()) &
                     (size(split(col(NameBasicsModel.primary_profession), ',')) == threshold)
             )
-        ).groupBy(NameBasicsModel.primary_profession).count().show(n=10)
+        ).groupBy(NameBasicsModel.primary_profession).count().limit(num=10)
 
     def count_persons_by_birth_year_with_number_of_titles(self, threshold=3) -> DataFrame:
         """
@@ -48,5 +48,5 @@ class NameBasicsData(TSVData):
                 .agg(count(when(col(NameBasicsModel.nconst).isNotNull(), 1))
                 .alias("person_count"))
                 .orderBy(desc(NameBasicsModel.birth_year))
-                .limit(num=threshold)
+                .limit(num=10)
         )
