@@ -48,5 +48,5 @@ class NameBasicsData(TSVData):
                 .agg(count(when(col(NameBasicsModel.nconst).isNotNull(), 1))
                 .alias("person_count"))
                 .orderBy(desc(NameBasicsModel.birth_year))
-                .show(n=10)
+                .limit(num=threshold)
         )
