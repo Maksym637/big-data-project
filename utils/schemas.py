@@ -7,7 +7,8 @@ from utils.models import (
     TitleRatingsModel,
     TitlePrincipalsModel,
     TitleCrewModel,
-    TitleBasicsModel
+    TitleBasicsModel,
+    NameBasicsModel
 )
 
 title_episode_schema = t.StructType(fields=[
@@ -48,4 +49,13 @@ title_basics_schema = t.StructType(fields=[
     t.StructField(name=TitleBasicsModel.end_year, dataType=t.IntegerType(), nullable=True),
     t.StructField(name=TitleBasicsModel.runtime_minutes, dataType=t.IntegerType(), nullable=True),
     t.StructField(name=TitleBasicsModel.genres, dataType=t.StringType(), nullable=True)
+])
+
+name_basics_schema = t.StructType(fields=[
+    t.StructField(name=NameBasicsModel.nconst, dataType=t.StringType(), nullable=False),
+    t.StructField(name=NameBasicsModel.primary_name, dataType=t.StringType(), nullable=False),
+    t.StructField(name=NameBasicsModel.birth_year, dataType=t.IntegerType(), nullable=True),
+    t.StructField(name=NameBasicsModel.death_year, dataType=t.IntegerType(), nullable=True),
+    t.StructField(name=NameBasicsModel.primary_profession, dataType=t.StringType(), nullable=False),
+    t.StructField(name=NameBasicsModel.known_for_titles, dataType=t.StringType(), nullable=False)
 ])
