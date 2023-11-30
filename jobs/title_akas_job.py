@@ -11,7 +11,6 @@ from typing import List
 class TitleAkasData(TSVData):
     """Business questions for the `title.akas` data"""
 
-
     def count_ua_titles(self) -> int:
         """
         Count titles with ukrainian localization
@@ -26,13 +25,12 @@ class TitleAkasData(TSVData):
             )
             .count()
         )
-        
 
     def unique_languages(self) -> List[str]:
         """
         Get unique languages
         """
-
+        
         return(
             [
                 i.asDict(True)['language'] for i in
@@ -42,7 +40,6 @@ class TitleAkasData(TSVData):
                 .collect()
             ]
         )
-
 
     def count_titles_by_type(self) -> DataFrame:
         """
@@ -56,7 +53,6 @@ class TitleAkasData(TSVData):
             .alias("type_count"))
         )
 
-    
     def get_original_bowdlerized(self) -> DataFrame:
         """
         Get pairs [original title - bowdlerized title] for all bowdlerized titles
@@ -80,7 +76,6 @@ class TitleAkasData(TSVData):
             )
         )
 
-
     def rank_by_localizations(self) -> DataFrame:
         """
         Rank titles by localization count
@@ -96,7 +91,6 @@ class TitleAkasData(TSVData):
             .alias(localization_count))
             .withColumn("rank", dense_rank().over(windowSpec))
         )
-
 
     def rank_by_dvd_count(self) -> DataFrame:
         """
