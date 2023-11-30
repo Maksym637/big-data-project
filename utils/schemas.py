@@ -8,7 +8,8 @@ from utils.models import (
     TitlePrincipalsModel,
     TitleCrewModel,
     TitleBasicsModel,
-    NameBasicsModel
+    NameBasicsModel,
+    TitleAkasModel
 )
 
 title_episode_schema = t.StructType(fields=[
@@ -58,4 +59,15 @@ name_basics_schema = t.StructType(fields=[
     t.StructField(name=NameBasicsModel.death_year, dataType=t.IntegerType(), nullable=True),
     t.StructField(name=NameBasicsModel.primary_profession, dataType=t.StringType(), nullable=False),
     t.StructField(name=NameBasicsModel.known_for_titles, dataType=t.StringType(), nullable=False)
+])
+
+title_akas_schema = t.StructType(fields=[
+    t.StructField(name=TitleAkasModel.title_id, dataType=t.StringType(), nullable=False),
+    t.StructField(name=TitleAkasModel.ordering, dataType=t.IntegerType(), nullable=False),
+    t.StructField(name=TitleAkasModel.title, dataType=t.StringType(), nullable=False),
+    t.StructField(name=TitleAkasModel.region, dataType=t.StringType(), nullable=True),
+    t.StructField(name=TitleAkasModel.language, dataType=t.StringType(), nullable=True),
+    t.StructField(name=TitleAkasModel.types, dataType=t.StringType(), nullable=True),
+    t.StructField(name=TitleAkasModel.attributes, dataType=t.StringType(), nullable=True),
+    t.StructField(name=TitleAkasModel.is_original_title, dataType=t.IntegerType(), nullable=False)
 ])
