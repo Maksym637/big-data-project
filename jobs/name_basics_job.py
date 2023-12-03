@@ -1,12 +1,13 @@
 """Module with jobs for the `name.basics` data"""
 
 from pyspark.sql.dataframe import DataFrame
-from pyspark.sql.functions import col, split, size, count, when, desc
+from pyspark.sql.functions import col, split, size, count, when, desc, dense_rank, avg, explode
+from pyspark.sql.window import Window, WindowSpec
 
-from utils.models import NameBasicsModel
+from utils.models import NameBasicsModel, TitleRatingsModel
 
 from jobs.base_job import TSVData
-
+from jobs.title_ratings_job import TitleRatingsData
 
 class NameBasicsData(TSVData):
     """Business questions for the `name.basics` data"""
@@ -49,4 +50,76 @@ class NameBasicsData(TSVData):
                 .alias("person_count"))
                 .orderBy(desc(NameBasicsModel.birth_year))
                 .limit(num=10)
+        )
+
+    def top_actors_average_rating(self, title_ratings_data: TitleRatingsData, threshold=15) -> DataFrame:
+        """
+        Find the top 15 actors/actresses with the highest average rating for one title their participate in
+        """
+        actor_col = "actor"
+
+        return (
+            self.tsv_df
+            .filter(
+                (col(NameBasicsModel.primary_name).isNotNull()) &
+                (col(NameBasicsModel.primary_profession).isNotNull()) &
+                (col(NameBasicsModel.primary_profession).contains("actor")) | (col(NameBasicsModel.primary_profession).contains("actress"))
+            )
+            .withColumn(actor_col, explode(split(col(NameBasicsModel.primary_name), ",")))
+            .select(NameBasicsModel.known_for_titles, actor_col)
+            .join(
+                other=title_ratings_data.tsv_df
+                .select(
+                    col(TitleRatingsModel.tconst),
+                    col(TitleRatingsModel.average_rating),
+                ),
+                on=self.tsv_df[NameBasicsModel.known_for_titles] == title_ratings_data.tsv_df[TitleRatingsModel.tconst],
+                how="inner"
+            )
+            .drop(title_ratings_data.tsv_df[TitleRatingsModel.tconst])
+            .groupBy(actor_col, NameBasicsModel.known_for_titles).agg(avg(TitleRatingsModel.average_rating).alias("avg_rating"))
+            .orderBy(desc("avg_rating"))
+            .limit(num=threshold)
+        )
+
+    def rank_youngest_person_for_profession(self, threshold=10) -> DataFrame:
+        """
+        Rank the youngest person for each profession
+        """
+        profession_col = "profession"
+        rank_col = "rank"
+        window_spec: WindowSpec = Window.partitionBy(profession_col).orderBy(desc(NameBasicsModel.birth_year))
+
+        return (
+            self.tsv_df
+            .filter(
+                (col(NameBasicsModel.birth_year).isNotNull()) &
+                (col(NameBasicsModel.primary_name).isNotNull()) &
+                (col(NameBasicsModel.primary_profession).isNotNull())
+            )
+            .withColumn(profession_col, explode(split(col(NameBasicsModel.primary_profession), ",")))
+            .select(profession_col, NameBasicsModel.primary_name, NameBasicsModel.birth_year)
+            .withColumn(rank_col, dense_rank().over(window_spec))
+            .limit(num=threshold)
+        )
+
+    def rank_oldest_person_in_title(self, threshold=10) -> DataFrame:
+        """
+        Rank the oldest person for each title
+        """
+        title_col = "title"
+        rank_col = "rank"
+        window_spec: WindowSpec = Window.partitionBy(title_col).orderBy(NameBasicsModel.birth_year)
+
+        return (
+            self.tsv_df
+            .filter(
+                (col(NameBasicsModel.birth_year).isNotNull()) &
+                (col(NameBasicsModel.primary_name).isNotNull()) &
+                (col(NameBasicsModel.known_for_titles).isNotNull())
+            )
+            .withColumn(title_col, explode(split(col(NameBasicsModel.known_for_titles), ",")))
+            .select(title_col, NameBasicsModel.primary_name, NameBasicsModel.birth_year)
+            .withColumn(rank_col, dense_rank().over(window_spec))
+            .limit(num=threshold)
         )

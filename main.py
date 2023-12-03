@@ -89,6 +89,7 @@ if __name__ == '__main__':
         (title_episode_df.get_title_episodes_with_provided_season_number(), 'title_episode_bq_1'),
         (title_episode_df.get_first_title_episodes_in_interval(), 'title_episode_bq_2'),
         (title_episode_df.get_first_latest_title_episodes(), 'title_episode_bq_3'),
+        (title_episode_df.rank_episodes_within_each_season(), 'title_episode_bq_4'),
 
         # BQ for the `title.ratings` data
         (title_ratings_df.count_highly_rated_titles(), 'title_ratings_bq_1'),
@@ -120,7 +121,10 @@ if __name__ == '__main__':
         # BQ for the `name.basics` data
         (name_basics_df.get_first_alive_specific_persons(), 'name_basics_bq_1'),
         (name_basics_df.count_persons_by_profession(), 'name_basics_bq_2'),
-        (name_basics_df.count_persons_by_birth_year_with_number_of_titles(), 'name_basics_bq_3')
+        (name_basics_df.count_persons_by_birth_year_with_number_of_titles(), 'name_basics_bq_3'),
+        (name_basics_df.top_actors_average_rating(title_ratings_df), 'name_basics_bq_4'),
+        (name_basics_df.rank_youngest_person_for_profession(), 'name_basics_bq_5'),
+        (name_basics_df.rank_oldest_person_in_title(), 'name_basics_bq_6')
 
         # BQ for the `title.akas` data
         (title_akas_df.count_ua_titles(), 'title_akas_bq_1'),
