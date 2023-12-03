@@ -1,5 +1,7 @@
 """Module in which the entry point to the program is located"""
 
+import time
+
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
 
@@ -84,6 +86,8 @@ if __name__ == '__main__':
     name_basics_df.get_first_rows()
     title_akas_df.get_first_rows()
 
+    start_time = time.time()
+
     processed_df_list = [
         # BQ for the `title.episode` data
         (title_episode_df.get_title_episodes_with_provided_season_number(), 'title_episode_bq_1'),
@@ -124,7 +128,7 @@ if __name__ == '__main__':
         (name_basics_df.count_persons_by_birth_year_with_number_of_titles(), 'name_basics_bq_3'),
         (name_basics_df.top_actors_average_rating(title_ratings_df), 'name_basics_bq_4'),
         (name_basics_df.rank_youngest_person_for_profession(), 'name_basics_bq_5'),
-        (name_basics_df.rank_oldest_person_in_title(), 'name_basics_bq_6')
+        (name_basics_df.rank_oldest_person_in_title(), 'name_basics_bq_6'),
 
         # BQ for the `title.akas` data
         (title_akas_df.count_ua_titles(), 'title_akas_bq_1'),
@@ -134,5 +138,7 @@ if __name__ == '__main__':
         (title_akas_df.rank_by_localizations(), 'title_akas_bq_5'),
         (title_akas_df.rank_by_dvd_count(), 'title_akas_bq_6')
     ]
+
+    print(f'Total time for jobs execution is {(time.time() - start_time)}')
 
     write_results_to_file(processed_df_list)
