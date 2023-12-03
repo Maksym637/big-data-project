@@ -111,7 +111,10 @@ if __name__ == '__main__':
         # BQ for the `name.basics` data
         (name_basics_df.get_first_alive_specific_persons(), 'name_basics_bq_1'),
         (name_basics_df.count_persons_by_profession(), 'name_basics_bq_2'),
-        (name_basics_df.count_persons_by_birth_year_with_number_of_titles(), 'name_basics_bq_3')
+        (name_basics_df.count_persons_by_birth_year_with_number_of_titles(), 'name_basics_bq_3'),
+        (name_basics_df.top_actors_average_rating(title_ratings_df), 'name_basics_bq_4'),
+        (name_basics_df.rank_youngest_person_for_profession(), 'name_basics_bq_5'),
+        (name_basics_df.rank_oldest_person_in_title(), 'name_basics_bq_6')
     ]
 
     write_results_to_file(processed_df_list)
