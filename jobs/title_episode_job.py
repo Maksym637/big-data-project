@@ -1,6 +1,8 @@
 """Module with jobs for the `title.episode` data"""
 
+from pyspark.sql import Window, WindowSpec
 from pyspark.sql.dataframe import DataFrame
+from pyspark.sql.functions import col, max, rank
 
 from utils.models import TitleEpisodeModel
 
@@ -35,13 +37,40 @@ class TitleEpisodeData(TSVData):
             )
         ).limit(num=limit_num)
 
-    def get_first_latest_title_episodes(self, limit_num=5) -> DataFrame:
+    def get_first_latest_title_episodes(self, limit_num=10) -> DataFrame:
         """
-        Get first 5 title episodes with the latest season number
+        Get first 10 title episodes with the latest season number
         """
         return (
             self.tsv_df
-                .groupBy(self.tsv_df[TitleEpisodeModel.parent_tconst])
-                .max(TitleEpisodeModel.season_number)
+                .filter(condition=(
+                    col(TitleEpisodeModel.parent_tconst).isNotNull() &
+                    col(TitleEpisodeModel.season_number).isNotNull()
+                ))
+                .groupBy(TitleEpisodeModel.parent_tconst)
+                .agg(max(TitleEpisodeModel.season_number).alias('max_season_number'))
+                .limit(num=limit_num)
+        )
+
+    def rank_episodes_within_each_season(self, limit_num=50) -> DataFrame:
+        """
+        Rank episodes within each season
+        """
+        window_spec: WindowSpec = (
+            Window
+                .partitionBy(TitleEpisodeModel.parent_tconst, TitleEpisodeModel.season_number)
+                .orderBy(TitleEpisodeModel.episode_number)
+        )
+
+        return (
+            self.tsv_df
+                .filter(condition=(
+                    col(TitleEpisodeModel.season_number).isNotNull() &
+                    col(TitleEpisodeModel.episode_number).isNotNull()
+                ))
+                .withColumn(
+                    colName='episode_rank',
+                    col=rank().over(window_spec)
+                )
                 .limit(num=limit_num)
         )

@@ -2,7 +2,9 @@
 
 from pyspark.sql import Window, WindowSpec
 from pyspark.sql.dataframe import DataFrame
-from pyspark.sql.functions import concat_ws, collect_list, dense_rank, row_number, explode, count, split, size, col
+from pyspark.sql.functions import (
+    concat_ws, collect_list, dense_rank, row_number, explode, count, split, size, col
+)
 
 from utils.models import TitleCrewModel, TitlePrincipalsModel, TitleRatingsModel
 
@@ -27,6 +29,7 @@ class TitleCrewData(TSVData):
         all_crew_col: str = "whole_crew"
         crew_member_col: str = "crew_member"
         total_count_col: str = "total_count"
+
         return (
             self.tsv_df
             .withColumn(all_crew_col, concat_ws(",", col(TitleCrewModel.directors), col(TitleCrewModel.writers)))
@@ -45,6 +48,7 @@ class TitleCrewData(TSVData):
         Get titles where only one person worked both as director and writer
         """
         person_col: str = "person"
+
         return (
             self.tsv_df
             .filter(col(TitleCrewModel.directors).isNotNull())
@@ -61,6 +65,7 @@ class TitleCrewData(TSVData):
         director_col: str = "director"
         idx_col: str = "idx"
         window_spec: WindowSpec = Window.partitionBy(TitleCrewModel.tconst).orderBy(director_col)
+
         return (
             self.tsv_df
             .select(TitleCrewModel.tconst, TitleCrewModel.directors)
@@ -92,7 +97,12 @@ class TitleCrewData(TSVData):
         """
         writer_col: str = "writer"
         rank_col: str = "rank"
-        window_spec: WindowSpec = Window.partitionBy(writer_col).orderBy(col(TitleRatingsModel.average_rating).desc())
+        window_spec: WindowSpec = (
+            Window
+                .partitionBy(writer_col)
+                .orderBy(col(TitleRatingsModel.average_rating).desc())
+        )
+
         return (
             self.tsv_df
             .filter(col(TitleCrewModel.writers).isNotNull())
@@ -117,6 +127,7 @@ class TitleCrewData(TSVData):
         """
         directors_col: str = 'director'
         title_count_col: str = 'title_count'
+
         return (
             self.tsv_df
             .filter(col(TitleCrewModel.directors).isNotNull())

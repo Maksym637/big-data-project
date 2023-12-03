@@ -2,9 +2,26 @@
 
 class TitleAkasModel:
     """Fields for the `title.akas` data"""
+    title_id = 'titleId'
+    ordering = 'ordering'
+    title = 'title'
+    region = 'region'
+    language = 'language'
+    types = 'types'
+    attributes = 'attributes'
+    is_original_title = 'isOriginalTitle'
 
 class TitleBasicsModel:
     """Fields for the `title.basics` data"""
+    tconst = 'tconst'
+    title_type = 'titleType'
+    primary_title = 'primaryTitle'
+    original_title = 'originalTitle'
+    is_adult = 'isAdult'
+    start_year = 'startYear'
+    end_year = 'endYear'
+    runtime_minutes = 'runtimeMinutes'
+    genres = 'genres'
 
 class TitleCrewModel:
     """Fields for the `title.crew` data"""
@@ -36,3 +53,9 @@ class TitleRatingsModel:
 
 class NameBasicsModel:
     """Fields for the `name.basics` data"""
+    nconst = 'nconst'
+    primary_name = 'primaryName'
+    birth_year = 'birthYear'
+    death_year = 'deathYear'
+    primary_profession = 'primaryProfession'
+    known_for_titles = 'knownForTitles'
