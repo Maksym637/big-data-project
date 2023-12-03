@@ -2,6 +2,14 @@
 
 class TitleAkasModel:
     """Fields for the `title.akas` data"""
+    title_id = 'titleId'
+    ordering = 'ordering'
+    title = 'title'
+    region = 'region'
+    language = 'language'
+    types = 'types'
+    attributes = 'attributes'
+    is_original_title = 'isOriginalTitle'
 
 class TitleBasicsModel:
     """Fields for the `title.basics` data"""

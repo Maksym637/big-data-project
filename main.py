@@ -11,7 +11,8 @@ from utils.schemas import (
     title_principals_schema,
     title_crew_schema,
     title_basics_schema,
-    name_basics_schema
+    name_basics_schema,
+    title_akas_schema
 )
 
 from jobs.title_episode_job import TitleEpisodeData
@@ -20,6 +21,7 @@ from jobs.title_principals_job import TitlePrincipalsData
 from jobs.title_crew_job import TitleCrewData
 from jobs.title_basics_job import TitleBasicsData
 from jobs.name_basics_job import NameBasicsData
+from jobs.title_akas_job import TitleAkasData
 
 spark_session = (
     SparkSession.builder
@@ -67,6 +69,12 @@ if __name__ == '__main__':
         schema=name_basics_schema
     )
 
+    title_akas_df = TitleAkasData(
+        spark_session=spark_session,
+        path=f'{INPUT_DATA_PATH}/title.akas.tsv',
+        schema=title_akas_schema
+    )
+
     # Definition of business questions
     title_episode_df.get_first_rows()
     title_ratings_df.get_first_rows()
@@ -74,6 +82,7 @@ if __name__ == '__main__':
     title_crew_df.get_first_rows()
     title_basics_df.get_first_rows()
     name_basics_df.get_first_rows()
+    title_akas_df.get_first_rows()
 
     processed_df_list = [
         # BQ for the `title.episode` data
@@ -116,6 +125,14 @@ if __name__ == '__main__':
         (name_basics_df.top_actors_average_rating(title_ratings_df), 'name_basics_bq_4'),
         (name_basics_df.rank_youngest_person_for_profession(), 'name_basics_bq_5'),
         (name_basics_df.rank_oldest_person_in_title(), 'name_basics_bq_6')
+
+        # BQ for the `title.akas` data
+        (title_akas_df.count_ua_titles(), 'title_akas_bq_1'),
+        (title_akas_df.unique_languages(), 'title_akas_bq_2'),
+        (title_akas_df.count_titles_by_type(), 'title_akas_bq_3'),
+        (title_akas_df.get_original_bowdlerized(), 'title_akas_bq_4'),
+        (title_akas_df.rank_by_localizations(), 'title_akas_bq_5'),
+        (title_akas_df.rank_by_dvd_count(), 'title_akas_bq_6')
     ]
 
     write_results_to_file(processed_df_list)
