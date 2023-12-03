@@ -1,7 +1,8 @@
 """Module with jobs for the `title.episode` data"""
 
+from pyspark.sql import Window, WindowSpec
 from pyspark.sql.dataframe import DataFrame
-from pyspark.sql.functions import col, max
+from pyspark.sql.functions import col, max, rank
 
 from utils.models import TitleEpisodeModel
 
@@ -48,5 +49,28 @@ class TitleEpisodeData(TSVData):
                 ))
                 .groupBy(TitleEpisodeModel.parent_tconst)
                 .agg(max(TitleEpisodeModel.season_number).alias('max_season_number'))
+                .limit(num=limit_num)
+        )
+
+    def rank_episodes_within_each_season(self, limit_num=50) -> DataFrame:
+        """
+        Rank episodes within each season
+        """
+        window_spec: WindowSpec = (
+            Window
+                .partitionBy(TitleEpisodeModel.parent_tconst, TitleEpisodeModel.season_number)
+                .orderBy(TitleEpisodeModel.episode_number)
+        )
+
+        return (
+            self.tsv_df
+                .filter(condition=(
+                    col(TitleEpisodeModel.season_number).isNotNull() &
+                    col(TitleEpisodeModel.episode_number).isNotNull()
+                ))
+                .withColumn(
+                    colName='episode_rank',
+                    col=rank().over(window_spec)
+                )
                 .limit(num=limit_num)
         )
