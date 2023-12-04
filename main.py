@@ -99,6 +99,9 @@ if __name__ == '__main__':
         (title_ratings_df.count_highly_rated_titles(), 'title_ratings_bq_1'),
         (title_ratings_df.count_titles_with_few_votes(), 'title_ratings_bq_2'),
         (title_ratings_df.get_average_votes_per_rating_interval(), 'title_ratings_bq_3'),
+        (title_ratings_df.running_total_and_average(), 'title_ratings_bq_4'),
+        (title_ratings_df.highest_rating_in_groups_of_five(), 'title_ratings_bq_5'),
+        (title_ratings_df.average_rating_by_director(title_crew_df), 'title_ratings_bq_6'),
 
         # BQ for the `title.principals` data
         (title_principals_df.get_people_count_on_each_film(), 'title_principals_bq_1'),
