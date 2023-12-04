@@ -1,12 +1,15 @@
 """Module with jobs for the `title.ratings` data"""
 
-from pyspark.sql import DataFrame, Window
-from pyspark.sql import functions as F
-from pyspark.sql.functions import sum, avg, max, desc, split, array_contains
+from pyspark.sql import Window, WindowSpec
+from pyspark.sql.dataframe import DataFrame
+from pyspark.sql.functions import (
+    sum, avg, max, desc, split, array_contains
+)
 
 from utils.models import TitleCrewModel, TitleRatingsModel
 
 from jobs.base_job import TSVData
+from jobs.title_crew_job import TitleCrewData
 
 
 class TitleRatingsData(TSVData):
@@ -41,15 +44,15 @@ class TitleRatingsData(TSVData):
                 .agg({'numVotes': 'avg'})
                 .orderBy('rating_interval')
         )
-    
+
     def running_total_and_average(self):
         """
         Calculate the running total of votes and the average rating for each title,
-        ordered by average rating in descending order.
+        ordered by average rating in descending order
         """
         running_total_votes_col: str = 'running_total_votes'
         running_avg_rating_col: str = 'running_avg_rating'
-        window_spec = Window.orderBy(desc(TitleRatingsModel.average_rating))
+        window_spec: WindowSpec = Window.orderBy(desc(TitleRatingsModel.average_rating))
 
         return (
             self.tsv_df
@@ -63,14 +66,14 @@ class TitleRatingsData(TSVData):
                     running_avg_rating_col
                 )
         )
-    
+
     def highest_rating_in_groups_of_five(self):
         """
         Identify the highest average rating within each group of 5 titles,
-        sorted by number of votes in descending order.
+        sorted by number of votes in descending order
         """
         highest_rating_group_col: str = 'highest_rating_group'
-        window_spec = Window.orderBy(desc(TitleRatingsModel.number_votes)).rowsBetween(0, 4)
+        window_spec: WindowSpec = Window.orderBy(desc(TitleRatingsModel.number_votes)).rowsBetween(0, 4)
 
         return (
             self.tsv_df
@@ -82,13 +85,14 @@ class TitleRatingsData(TSVData):
                     highest_rating_group_col
                 )
         )
-    
-    def average_rating_by_director(self, title_crew_data, director_id) -> float:
+
+    def average_rating_by_director(
+        self,
+        title_crew_data: TitleCrewData,
+        director_id='nm0005690'
+    ) -> float:
         """
-        Find the average rating of movies directed by a specific director.
-        :param title_crew_data: DataFrame of title crew data.
-        :param director_id: The unique identifier of the director.
-        :return: The average rating of their movies.
+        Find the average rating of movies directed by a specific director
         """
         joined_df = self.tsv_df.join(
             other=title_crew_data.tsv_df,
@@ -101,4 +105,3 @@ class TitleRatingsData(TSVData):
         )
 
         return director_movies_df.agg(avg(TitleRatingsModel.average_rating)).first()[0]
-
