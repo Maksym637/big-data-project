@@ -2,9 +2,9 @@
 
 from pyspark.sql import DataFrame, Window
 from pyspark.sql import functions as F
-from pyspark.sql.functions import sum, avg, max, desc
+from pyspark.sql.functions import sum, avg, max, desc, split, array_contains
 
-from utils.models import TitleRatingsModel
+from utils.models import TitleCrewModel, TitleRatingsModel
 
 from jobs.base_job import TSVData
 
@@ -82,4 +82,23 @@ class TitleRatingsData(TSVData):
                     highest_rating_group_col
                 )
         )
+    
+    def average_rating_by_director(self, title_crew_data, director_id) -> float:
+        """
+        Find the average rating of movies directed by a specific director.
+        :param title_crew_data: DataFrame of title crew data.
+        :param director_id: The unique identifier of the director.
+        :return: The average rating of their movies.
+        """
+        joined_df = self.tsv_df.join(
+            other=title_crew_data.tsv_df,
+            on=self.tsv_df[TitleRatingsModel.tconst] == title_crew_data.tsv_df[TitleCrewModel.tconst],
+            how='inner'
+        )
+
+        director_movies_df = joined_df.filter(
+            array_contains(split(title_crew_data.tsv_df[TitleCrewModel.directors], ','), director_id)
+        )
+
+        return director_movies_df.agg(avg(TitleRatingsModel.average_rating)).first()[0]
 
