@@ -2,6 +2,7 @@
 
 from pyspark.sql import DataFrame, Window
 from pyspark.sql import functions as F
+from pyspark.sql.functions import sum, avg, max, desc
 
 from utils.models import TitleRatingsModel
 
@@ -46,12 +47,21 @@ class TitleRatingsData(TSVData):
         Calculate the running total of votes and the average rating for each title,
         ordered by average rating in descending order.
         """
-        window_spec = Window.orderBy(F.desc("averageRating"))
+        running_total_votes_col: str = 'running_total_votes'
+        running_avg_rating_col: str = 'running_avg_rating'
+        window_spec = Window.orderBy(desc(TitleRatingsModel.average_rating))
+
         return (
             self.tsv_df
-                .withColumn("RunningTotalVotes", F.sum("numVotes").over(window_spec))
-                .withColumn("RunningAvgRating", F.avg("averageRating").over(window_spec))
-                .select("tconst", "averageRating", "numVotes", "RunningTotalVotes", "RunningAvgRating")
+                .withColumn(running_total_votes_col, sum(TitleRatingsModel.number_votes).over(window_spec))
+                .withColumn(running_avg_rating_col, avg(TitleRatingsModel.average_rating).over(window_spec))
+                .select(
+                    TitleRatingsModel.tconst,
+                    TitleRatingsModel.average_rating,
+                    TitleRatingsModel.number_votes,
+                    running_total_votes_col,
+                    running_avg_rating_col
+                )
         )
     
     def highest_rating_in_groups_of_five(self):
@@ -59,10 +69,17 @@ class TitleRatingsData(TSVData):
         Identify the highest average rating within each group of 5 titles,
         sorted by number of votes in descending order.
         """
-        window_spec = Window.orderBy(F.desc("numVotes")).rowsBetween(0, 4)
+        highest_rating_group_col: str = 'highest_rating_group'
+        window_spec = Window.orderBy(desc(TitleRatingsModel.number_votes)).rowsBetween(0, 4)
+
         return (
             self.tsv_df
-                .withColumn("HighestRatingInGroup", F.max("averageRating").over(window_spec))
-                .select("tconst", "averageRating", "numVotes", "HighestRatingInGroup")
+                .withColumn(highest_rating_group_col, max(TitleRatingsModel.average_rating).over(window_spec))
+                .select(
+                    TitleRatingsModel.tconst,
+                    TitleRatingsModel.average_rating,
+                    TitleRatingsModel.number_votes,
+                    highest_rating_group_col
+                )
         )
 
