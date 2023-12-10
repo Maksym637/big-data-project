@@ -124,6 +124,7 @@ if __name__ == '__main__':
         (title_basics_df.get_count_each_title_type(), 'title_basics_bq_2'),
         (title_basics_df.get_primary_title_where_worked_most_writers(title_crew_df), 'title_basics_bq_3'),
         (title_basics_df.get_title_basics_with_max_runtime_minutes(), 'title_basics_bq_4'),
+        (title_basics_df.get_min_max_start_end_years_for_each_title_type(), 'title_basics_bq_5'),
 
         # BQ for the `name.basics` data
         (name_basics_df.get_first_alive_specific_persons(), 'name_basics_bq_1'),
@@ -142,6 +143,6 @@ if __name__ == '__main__':
         (title_akas_df.rank_by_dvd_count(), 'title_akas_bq_6')
     ]
 
-    print(f'Total time for jobs execution is {(time.time() - start_time)}')
-
     write_results_to_file(processed_df_list)
+
+    print(f'Total time for jobs execution is {(time.time() - start_time)}')

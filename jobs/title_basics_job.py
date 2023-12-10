@@ -4,7 +4,7 @@ import pyspark.sql.types as t
 from pyspark.sql import Window, WindowSpec
 from pyspark.sql.dataframe import DataFrame
 from pyspark.sql.functions import (
-    explode, count, split, col, max
+    explode, count, split, col, max, min
 )
 
 from utils.models import TitleBasicsModel, TitleCrewModel
@@ -95,4 +95,46 @@ class TitleBasicsData(TSVData):
                     runtime_minutes_max_col
                 )
                 .limit(num=limit_num)
+        )
+
+    def get_min_max_start_end_years_for_each_title_type(self) -> DataFrame:
+        """
+        Get the minimum and maximum starting and ending year for each content title type
+        """
+        min_start_year_col: str = 'min_start_year'
+        max_start_year_col: str = 'max_start_year'
+        min_end_year_col: str = 'min_end_year'
+        max_end_year_col: str = 'max_end_year'
+        window_spec: WindowSpec = Window.partitionBy(TitleBasicsModel.title_type)
+
+        return (
+            self.tsv_df
+                .withColumn(
+                    colName=min_start_year_col,
+                    col=min(col(TitleBasicsModel.start_year)).over(window_spec)
+                )
+                .withColumn(
+                    colName=max_start_year_col,
+                    col=max(col(TitleBasicsModel.start_year)).over(window_spec)
+                )
+                .withColumn(
+                    colName=min_end_year_col,
+                    col=min(col(TitleBasicsModel.end_year)).over(window_spec)
+                )
+                .withColumn(
+                    colName=max_end_year_col,
+                    col=max(col(TitleBasicsModel.end_year)).over(window_spec)
+                )
+                .select(
+                    TitleBasicsModel.tconst,
+                    TitleBasicsModel.title_type,
+                    TitleBasicsModel.primary_title,
+                    TitleBasicsModel.original_title,
+                    TitleBasicsModel.start_year,
+                    TitleBasicsModel.end_year,
+                    min_start_year_col,
+                    max_start_year_col,
+                    min_end_year_col,
+                    max_end_year_col
+                )
         )
