@@ -1,0 +1,14 @@
+cd / && python3 -m unittest discover /home/maksym/Desktop/big-data-project/tests
+23/12/05 22:34:13 WARN Utils: Your hostname, lwo1-lhp-a05375 resolves to a loopback address: 127.0.1.1; using 192.168.0.111 instead (on interface wlp0s20f3)
+23/12/05 22:34:13 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+23/12/05 22:34:14 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+../usr/lib/python3.10/socket.py:776: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 48456), raddr=('127.0.0.1', 44551)>
+  self._sock = None
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+----------------------------------------------------------------------
+Ran 3 tests in 6.334s
+
+OK
