@@ -9,8 +9,6 @@ from pyspark.sql.functions import (
 from utils.models import TitleCrewModel, TitlePrincipalsModel, TitleRatingsModel
 
 from jobs.base_job import TSVData
-from jobs.title_principals_job import TitlePrincipalsData
-from jobs.title_ratings_job import TitleRatingsData
 
 
 class TitleCrewData(TSVData):
@@ -57,7 +55,7 @@ class TitleCrewData(TSVData):
             .filter(~col(person_col).like("%,%"))
         )
 
-    def get_titles_where_director_also_played_character(self, title_principals_data: TitlePrincipalsData) -> DataFrame:
+    def get_titles_where_director_also_played_character(self, title_principals_data: TSVData) -> DataFrame:
         """
         Get titles where director also played one of the characters.
         Creates a separate numbered row for each title and director pair.
@@ -91,7 +89,7 @@ class TitleCrewData(TSVData):
             .withColumn(idx_col, row_number().over(window_spec))
         )
 
-    def get_writers_title_rating_rank(self, title_ratings_data: TitleRatingsData) -> DataFrame:
+    def get_writers_title_rating_rank(self, title_ratings_data: TSVData) -> DataFrame:
         """
         Get a rank of title each writer worked on based on average title ranking
         """

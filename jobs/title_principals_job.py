@@ -5,7 +5,6 @@ from pyspark.sql.dataframe import DataFrame
 from pyspark.sql.functions import count, col, row_number
 
 from utils.models import TitlePrincipalsModel, TitleRatingsModel
-from jobs.title_ratings_job import TitleRatingsData
 
 from jobs.base_job import TSVData
 
@@ -54,7 +53,7 @@ class TitlePrincipalsData(TSVData):
 
     def get_directors_of_the_most_popular_titles(
         self,
-        title_ratings_data: TitleRatingsData,
+        title_ratings_data: TSVData,
         limit_num=10
     ) -> DataFrame:
         """

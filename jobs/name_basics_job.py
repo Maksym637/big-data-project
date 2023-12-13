@@ -7,7 +7,6 @@ from pyspark.sql.window import Window, WindowSpec
 from utils.models import NameBasicsModel, TitleRatingsModel
 
 from jobs.base_job import TSVData
-from jobs.title_ratings_job import TitleRatingsData
 
 
 class NameBasicsData(TSVData):
@@ -59,7 +58,7 @@ class NameBasicsData(TSVData):
                 .limit(num=10)
         )
 
-    def top_actors_average_rating(self, title_ratings_data: TitleRatingsData, threshold=15) -> DataFrame:
+    def top_actors_average_rating(self, title_ratings_data: TSVData, threshold=15) -> DataFrame:
         """
         Find the top 15 actors/actresses with the highest average rating for one title their participate in
         """
