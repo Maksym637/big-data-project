@@ -9,7 +9,6 @@ from pyspark.sql.functions import (
 from utils.models import TitleCrewModel, TitleRatingsModel
 
 from jobs.base_job import TSVData
-from jobs.title_crew_job import TitleCrewData
 
 
 class TitleRatingsData(TSVData):
@@ -88,7 +87,7 @@ class TitleRatingsData(TSVData):
 
     def average_rating_by_director(
         self,
-        title_crew_data: TitleCrewData,
+        title_crew_data: TSVData,
         director_id='nm0005690'
     ) -> float:
         """

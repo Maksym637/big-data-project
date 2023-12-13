@@ -10,7 +10,6 @@ from pyspark.sql.functions import (
 from utils.models import TitleBasicsModel, TitleCrewModel
 
 from jobs.base_job import TSVData
-from jobs.title_crew_job import TitleCrewData
 
 
 class TitleBasicsData(TSVData):
@@ -45,7 +44,7 @@ class TitleBasicsData(TSVData):
 
     def get_primary_title_where_worked_most_writers(
         self,
-        title_crew_data: TitleCrewData
+        title_crew_data: TSVData
     ) -> DataFrame:
         """
         Get the primary title of the title on which the most number of writers worked
